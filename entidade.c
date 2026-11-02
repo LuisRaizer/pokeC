@@ -5,9 +5,8 @@
 
 Criatura* inicializar_criaturas(void) {
     Criatura* lista = (Criatura*) malloc(TOTAL_CRIATURAS * sizeof(Criatura));
-
     if (lista == NULL) {
-        printf("Erro: Não foi possível alocar memória\n");
+        printf("Erro: Nao foi possivel alocar memoria\n");
         return NULL;
     }
 
@@ -18,7 +17,7 @@ Criatura* inicializar_criaturas(void) {
     lista[0].hp_atual = 45;
     strcpy(lista[0].habilidades[0].nome, "Brasa");
     lista[0].habilidades[0].poder = 30;
-    strcpy(lista[0].habilidades[1].nome, "Arranhão");
+    strcpy(lista[0].habilidades[1].nome, "Arranhao");
     lista[0].habilidades[1].poder = 15;
 
     strcpy(lista[1].nome, "Squirtle");
@@ -28,7 +27,7 @@ Criatura* inicializar_criaturas(void) {
     lista[1].hp_atual = 45;
     strcpy(lista[1].habilidades[0].nome, "Bolhas");
     lista[1].habilidades[0].poder = 30;
-    strcpy(lista[1].habilidades[1].nome, "Arranhão");
+    strcpy(lista[1].habilidades[1].nome, "Arranhao");
     lista[1].habilidades[1].poder = 15;
 
     strcpy(lista[2].nome, "Bulbasaur");
@@ -36,9 +35,9 @@ Criatura* inicializar_criaturas(void) {
     lista[2].xp = 0;
     lista[2].hp_max = 45;
     lista[2].hp_atual = 45;
-    strcpy(lista[2].habilidades[0].nome, "Chicote de Cipó");
+    strcpy(lista[2].habilidades[0].nome, "Chicote de Cipo");
     lista[2].habilidades[0].poder = 30;
-    strcpy(lista[2].habilidades[1].nome, "Arranhão");
+    strcpy(lista[2].habilidades[1].nome, "Arranhao");
     lista[2].habilidades[1].poder = 15;
 
     strcpy(lista[3].nome, "Pikachu");
@@ -46,9 +45,9 @@ Criatura* inicializar_criaturas(void) {
     lista[3].xp = 0;
     lista[3].hp_max = 40;
     lista[3].hp_atual = 40;
-    strcpy(lista[3].habilidades[0].nome, "Choque do Trovão");
+    strcpy(lista[3].habilidades[0].nome, "Choque do Trovao");
     lista[3].habilidades[0].poder = 30;
-    strcpy(lista[3].habilidades[1].nome, "Ataque Rápido");
+    strcpy(lista[3].habilidades[1].nome, "Ataque Rapido");
     lista[3].habilidades[1].poder = 15;
 
     return lista;
@@ -62,9 +61,8 @@ void liberar_criaturas(Criatura* lista) {
 
 Criatura* obter_criatura_por_indice(Criatura* lista, int indice) {
     if (lista == NULL || indice < 0 || indice >= TOTAL_CRIATURAS) {
-        printf("Erro: Índice %d inválido ou lista nula\n", indice);
+        printf("Erro: Indice %d invalido ou lista nula\n", indice);
         return NULL;
     }
-
     return &lista[indice];
 }
