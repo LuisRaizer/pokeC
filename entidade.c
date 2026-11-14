@@ -15,6 +15,8 @@ Criatura* inicializar_criaturas(void) {
     lista[0].xp = 0;
     lista[0].hp_max = 45;
     lista[0].hp_atual = 45;
+    lista[0].ataque = 12;
+    lista[0].defesa = 8;
     strcpy(lista[0].habilidades[0].nome, "Brasa");
     lista[0].habilidades[0].poder = 30;
     strcpy(lista[0].habilidades[1].nome, "Arranhao");
@@ -25,6 +27,8 @@ Criatura* inicializar_criaturas(void) {
     lista[1].xp = 0;
     lista[1].hp_max = 45;
     lista[1].hp_atual = 45;
+    lista[1].ataque = 10;
+    lista[1].defesa = 11;
     strcpy(lista[1].habilidades[0].nome, "Bolhas");
     lista[1].habilidades[0].poder = 30;
     strcpy(lista[1].habilidades[1].nome, "Arranhao");
@@ -35,6 +39,8 @@ Criatura* inicializar_criaturas(void) {
     lista[2].xp = 0;
     lista[2].hp_max = 45;
     lista[2].hp_atual = 45;
+    lista[2].ataque = 11;
+    lista[2].defesa = 10;
     strcpy(lista[2].habilidades[0].nome, "Chicote de Cipo");
     lista[2].habilidades[0].poder = 30;
     strcpy(lista[2].habilidades[1].nome, "Arranhao");
@@ -45,6 +51,8 @@ Criatura* inicializar_criaturas(void) {
     lista[3].xp = 0;
     lista[3].hp_max = 40;
     lista[3].hp_atual = 40;
+    lista[3].ataque = 13;
+    lista[3].defesa = 7;
     strcpy(lista[3].habilidades[0].nome, "Choque do Trovao");
     lista[3].habilidades[0].poder = 30;
     strcpy(lista[3].habilidades[1].nome, "Ataque Rapido");
@@ -59,10 +67,102 @@ void liberar_criaturas(Criatura* lista) {
     }
 }
 
-Criatura* obter_criatura_por_indice(Criatura* lista, int indice) {
+int validar_indice_criatura(Criatura* lista, int indice) {
     if (lista == NULL || indice < 0 || indice >= TOTAL_CRIATURAS) {
+        return 0;
+    }
+    return 1;
+}
+
+Criatura* obter_criatura_por_indice(Criatura* lista, int indice) {
+    if (!validar_indice_criatura(lista, indice)) {
         printf("Erro: Indice %d invalido ou lista nula\n", indice);
         return NULL;
     }
     return &lista[indice];
+}
+
+int habilidade_pertence_criatura(const Criatura* criatura, int indice_habilidade) {
+    if (criatura == NULL || indice_habilidade < 0 || indice_habilidade >= NUM_HABILIDADES) {
+        return 0;
+    }
+    if (criatura->habilidades[indice_habilidade].nome[0] == '\0') {
+        return 0;
+    }
+    return 1;
+}
+
+int obter_hp_atual(const Criatura* criatura) {
+    if (criatura == NULL) {
+        printf("Erro: Criatura nula\n");
+        return -1;
+    }
+    return criatura->hp_atual;
+}
+
+int obter_ataque(const Criatura* criatura) {
+    if (criatura == NULL) {
+        printf("Erro: Criatura nula\n");
+        return -1;
+    }
+    return criatura->ataque;
+}
+
+int obter_defesa(const Criatura* criatura) {
+    if (criatura == NULL) {
+        printf("Erro: Criatura nula\n");
+        return -1;
+    }
+    return criatura->defesa;
+}
+
+int obter_nivel(const Criatura* criatura) {
+    if (criatura == NULL) {
+        printf("Erro: Criatura nula\n");
+        return -1;
+    }
+    return criatura->nivel;
+}
+
+void definir_nivel(Criatura* criatura, int nivel) {
+    if (criatura == NULL) {
+        printf("Erro: Criatura nula\n");
+        return;
+    }
+    if (nivel > 0) {
+        criatura->nivel = nivel;
+    }
+}
+
+int obter_xp(const Criatura* criatura) {
+    if (criatura == NULL) {
+        printf("Erro: Criatura nula\n");
+        return -1;
+    }
+    return criatura->xp;
+}
+
+void definir_xp(Criatura* criatura, int xp) {
+    if (criatura == NULL) {
+        printf("Erro: Criatura nula\n");
+        return;
+    }
+    if (xp >= 0) {
+        criatura->xp = xp;
+    }
+}
+
+void curar_criatura(Criatura* criatura, int quantidade) {
+    if (criatura == NULL) {
+        printf("Erro: Criatura nula\n");
+        return;
+    }
+    if (quantidade <= 0) {
+        return;
+    }
+
+    criatura->hp_atual += quantidade;
+    if (criatura->hp_atual > criatura->hp_max) {
+        criatura->hp_atual = criatura->hp_max;
+    }
 }
