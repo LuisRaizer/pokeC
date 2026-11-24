@@ -3,11 +3,12 @@
 #include "interface.h"
 #include "entidade.h"
 #include "arquivos.h"
+#include "batalha.h"
 
 int main(void) {
     int opcao;
     Criatura* lista_criaturas = inicializar_criaturas();
-    EstadoBatalha estado_batalha;
+    EstadoBatalha estado_batalha = {0};
 
     if (lista_criaturas == NULL) {
         return 1;
@@ -27,12 +28,13 @@ int main(void) {
         switch (opcao) {
             case 1:
                 imprimir_mensagem("Nova partida...");
-                inicializar_estado_batalha_padrao(&estado_batalha, lista_criaturas);
-                printf("Criatura 1: %s (HP: %d/%d | Nivel: %d)\n",
-                       estado_batalha.jogador.nome,
-                       estado_batalha.jogador.hp_atual,
-                       estado_batalha.jogador.hp_max,
-                       estado_batalha.jogador.nivel);
+                preparar_nova_batalha(&estado_batalha, lista_criaturas);
+                if (iniciar_batalha(&estado_batalha) == RESULTADO_JOGADOR_VENCEU) {
+                    registrar_progresso_da_batalha(&estado_batalha, lista_criaturas);
+                    if (salvar_progresso("progresso.txt", lista_criaturas, TOTAL_CRIATURAS) != ARQ_OK) {
+                        imprimir_mensagem("Nao foi possivel salvar o progresso.");
+                    }
+                }
                 break;
 
             case 2:

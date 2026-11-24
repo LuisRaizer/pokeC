@@ -27,7 +27,12 @@ void liberar_criaturas(Criatura* lista);
 
 int validar_indice_criatura(Criatura* lista, int indice);
 int habilidade_pertence_criatura(const Criatura* criatura, int indice_habilidade);
+const Habilidade* obter_habilidade_por_indice(const Criatura* criatura, int indice_habilidade);
 
+const char* obter_nome(const Criatura* criatura);
+const char* obter_nome_habilidade(const Criatura* criatura, int indice_habilidade);
+int obter_poder_habilidade(const Criatura* criatura, int indice_habilidade);
+int obter_hp_max(const Criatura* criatura);
 int obter_hp_atual(const Criatura* criatura);
 int obter_ataque(const Criatura* criatura);
 int obter_defesa(const Criatura* criatura);
@@ -37,5 +42,7 @@ int obter_xp(const Criatura* criatura);
 void definir_xp(Criatura* criatura, int xp);
 
 void curar_criatura(Criatura* criatura, int quantidade);
+void receber_dano(Criatura* criatura, int quantidade);
+int criatura_derrotada(const Criatura* criatura);
 
 #endif

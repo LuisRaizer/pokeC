@@ -47,3 +47,45 @@ int ler_opcao(int min, int max) {
     
     return opcao;
 }
+
+void exibir_catalogo_de_criaturas(const Criatura *lista, int total) {
+    (void)lista;
+    (void)total;
+    imprimir_mensagem("Catalogo de criaturas em desenvolvimento...");
+}
+
+void exibir_resultado_da_batalha(const char *vencedor) {
+    (void)vencedor;
+    imprimir_mensagem("Resultado da batalha em desenvolvimento...");
+}
+
+void exibir_status_batalha(const Criatura *jogador, const Criatura *inimigo, int turno) {
+    (void)jogador;
+    (void)inimigo;
+    (void)turno;
+}
+
+void exibir_menu_habilidades(const Criatura *criatura) {
+    (void)criatura;
+}
+
+void exibir_ataque(const char *atacante, const char *habilidade, const char *alvo, int dano) {
+    (void)atacante;
+    (void)habilidade;
+    (void)alvo;
+    (void)dano;
+}
+
+void exibir_cura(const char *nome, int quantidade) {
+    (void)nome;
+    (void)quantidade;
+}
+
+void exibir_fim_de_turno(int turno) {
+    (void)turno;
+}
+
+void exibir_subida_de_nivel(const char *nome, int novo_nivel) {
+    (void)nome;
+    (void)novo_nivel;
+}

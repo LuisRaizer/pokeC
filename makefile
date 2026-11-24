@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g
 TARGET = pokec
-OBJS = main.o interface.o entidade.o arquivos.o
+OBJS = main.o interface.o entidade.o arquivos.o batalha.o
 
 all: $(TARGET)
 
@@ -11,7 +11,7 @@ $(TARGET): $(OBJS)
 main.o: main.c interface.h entidade.h arquivos.h
 	$(CC) $(CFLAGS) -c main.c
 
-interface.o: interface.c interface.h
+interface.o: interface.c interface.h entidade.h
 	$(CC) $(CFLAGS) -c interface.c
 
 entidade.o: entidade.c entidade.h
@@ -19,6 +19,9 @@ entidade.o: entidade.c entidade.h
 
 arquivos.o: arquivos.c arquivos.h entidade.h
 	$(CC) $(CFLAGS) -c arquivos.c
+
+batalha.o: batalha.c batalha.h entidade.h arquivos.h interface.h
+	$(CC) $(CFLAGS) -c batalha.c
 
 clean:
 	rm -f *.o $(TARGET)
