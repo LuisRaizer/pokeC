@@ -250,3 +250,10 @@ void exibir_tela_progresso(const Criatura *lista, int total) {
 
     printf("========================================\n");
 }
+
+int confirmar_descarte_save(void) {
+    printf("\n[Aviso] Existe uma partida salva em andamento.\n");
+    printf("Iniciar uma nova partida ira descartar esse salvamento.\n");
+    printf("Deseja continuar mesmo assim? (1 - Sim | 2 - Nao): ");
+    return (ler_opcao(1, 2) == 1);
+}

@@ -22,5 +22,6 @@ void exibir_subida_de_nivel(const char *nome, int novo_nivel);
 void exibir_erro_arquivo(int codigo_status, const char *acao);
 void exibir_tela_carregar_partida(int status_carregamento, const EstadoBatalha *estado);
 void exibir_tela_progresso(const Criatura *lista, int total);
+int confirmar_descarte_save(void);
 
 #endif

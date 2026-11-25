@@ -303,3 +303,17 @@ int remover_batalha_salva(const char *caminho) {
     }
     return ARQ_OK;
 }
+
+int existe_batalha_salva(const char *caminho) {
+    if (caminho == NULL) {
+        return 0;
+    }
+
+    FILE *f = fopen(caminho, "r");
+    if (f == NULL) {
+        return 0;
+    }
+
+    fclose(f);
+    return 1;
+}

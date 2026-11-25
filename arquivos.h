@@ -37,5 +37,6 @@ void inicializar_estado_batalha_padrao(EstadoBatalha *estado, Criatura *lista);
 int salvar_batalha(const char *caminho, const EstadoBatalha *estado);
 int carregar_batalha(const char *caminho, EstadoBatalha *estado, Criatura *lista);
 int remover_batalha_salva(const char *caminho);
+int existe_batalha_salva(const char *caminho);
 
 #endif

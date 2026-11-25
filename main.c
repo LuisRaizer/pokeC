@@ -36,6 +36,11 @@ int main(void) {
 
         switch (opcao) {
             case 1:
+                if (existe_batalha_salva(ARQ_CAMINHO_BATALHA) && !confirmar_descarte_save()) {
+                    imprimir_mensagem("Operacao cancelada. Voltando ao menu principal.");
+                    break;
+                }
+
                 imprimir_mensagem("Nova partida...");
                 preparar_nova_batalha(&estado_batalha, lista_criaturas);
                 if (iniciar_batalha(&estado_batalha) == RESULTADO_JOGADOR_VENCEU) {

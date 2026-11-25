@@ -1,3 +1,0 @@
-1;1;1;0;0
-Bulbassauro;1;0;115;115;14;18;Chicote de Vinha;10;Folha Navalha;16
-Bulbassauro;1;0;115;115;14;18;Chicote de Vinha;10;Folha Navalha;16

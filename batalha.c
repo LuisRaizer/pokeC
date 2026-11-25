@@ -39,6 +39,8 @@ void preparar_nova_batalha(EstadoBatalha *estado, Criatura *lista) {
     restaurar_hp_total(&estado->inimigo);
     estado->turno = 1;
 
+    (void)remover_batalha_salva(ARQ_CAMINHO_BATALHA);
+
     printf("O adversario sorteou: %s!\n", obter_nome(&estado->inimigo));
 }
 
@@ -212,6 +214,11 @@ void registrar_progresso_da_batalha(const EstadoBatalha *estado, Criatura *lista
         return;
     }
 
-    *original = estado->jogador;
-    restaurar_hp_total(original);
+    int nivel_atual = obter_nivel(original);
+    int nivel_batalha = obter_nivel(&estado->jogador);
+    int progrediu = (nivel_batalha > nivel_atual) || (nivel_batalha == nivel_atual && obter_xp(&estado->jogador) >= obter_xp(original));
+    if (progrediu) {
+        *original = estado->jogador;
+        restaurar_hp_total(original);
+    }
 }
