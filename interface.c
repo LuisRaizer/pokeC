@@ -158,12 +158,6 @@ void exibir_ataque(const char *atacante, const char *habilidade, const char *alv
            dano);
 }
 
-void exibir_cura(const char *nome, int quantidade) {
-    printf("\n%s recuperou %d pontos de vida!\n",
-           (nome != NULL) ? nome : "Criatura",
-           quantidade);
-}
-
 void exibir_fim_de_turno(int turno) {
     printf("\n--- Fim do turno %d ---\n", turno);
 }

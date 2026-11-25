@@ -14,7 +14,6 @@
 #define BONUS_HP_NIVEL     5
 #define BONUS_ATAQUE_NIVEL 2
 #define BONUS_DEFESA_NIVEL 2
-#define CURA_PADRAO        20
 
 void preparar_nova_batalha(EstadoBatalha *estado, Criatura *lista);
 int calcular_dano(const Criatura *atacante, const Criatura *alvo, int poder_habilidade);

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include "batalha.h"
 #include "interface.h"
 #include "arquivos.h"
@@ -151,7 +150,7 @@ void ganhar_xp(Criatura *criatura, int xp_ganho) {
     int xp_total = obter_xp(criatura) + xp_ganho;
     int nivel_atual = obter_nivel(criatura);
 
-    while (xp_total >= XP_POR_NIVEL && nivel_atual < NIVEL_MAX) {
+    while (xp_total >= XP_POR_NIVEL && nivel_atual < ENT_NIVEL_MAX) {
         xp_total -= XP_POR_NIVEL;
         nivel_atual++;
 
@@ -160,8 +159,8 @@ void ganhar_xp(Criatura *criatura, int xp_ganho) {
         exibir_subida_de_nivel(obter_nome(criatura), nivel_atual);
     }
 
-    if (xp_total > XP_MAX) {
-        xp_total = XP_MAX;
+    if (xp_total > ENT_XP_MAX) {
+        xp_total = ENT_XP_MAX;
     }
     definir_xp(criatura, xp_total);
 }

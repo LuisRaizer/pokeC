@@ -10,16 +10,6 @@
 #define ARQ_CAMINHO_BATALHA   "save.txt"
 #define ARQ_CAMINHO_PROGRESSO "progresso.txt"
 
-#define NIVEL_MIN 1
-#define NIVEL_MAX 100
-#define XP_MIN 0
-#define XP_MAX 1000000
-#define HP_MAX_LIMITE 9999
-#define ATR_MIN 1
-#define ATR_MAX 9999
-#define PODER_MIN 0
-#define PODER_MAX 9999
-
 typedef struct {
     int indice_jogador;
     int indice_inimigo;
