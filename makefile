@@ -8,10 +8,10 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
-main.o: main.c interface.h entidade.h arquivos.h
+main.o: main.c interface.h entidade.h arquivos.h batalha.h
 	$(CC) $(CFLAGS) -c main.c
 
-interface.o: interface.c interface.h entidade.h
+interface.o: interface.c interface.h entidade.h arquivos.h
 	$(CC) $(CFLAGS) -c interface.c
 
 entidade.o: entidade.c entidade.h

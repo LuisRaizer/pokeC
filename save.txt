@@ -1,0 +1,3 @@
+0;0;1;0;0
+Charmander;1;0;95;95;18;12;Brasa;10;Lanca-Chamas;18
+Charmander;1;0;95;95;18;12;Brasa;10;Lanca-Chamas;18

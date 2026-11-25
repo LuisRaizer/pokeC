@@ -1,135 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "batalha.h"
 #include "interface.h"
+#include "arquivos.h"
 
-int calcular_dano(const Criatura *atacante, const Criatura *defensor, int indice_habilidade) {
-    if (!atacante || !defensor || !habilidade_pertence_criatura(atacante, indice_habilidade)) {
+void preparar_nova_batalha(EstadoBatalha *estado, Criatura *lista) {
+    if (estado == NULL || lista == NULL) {
+        return;
+    }
+
+    static int semente_inicializada = 0;
+    if (!semente_inicializada) {
+        srand((unsigned int)time(NULL));
+        semente_inicializada = 1;
+    }
+
+    exibir_catalogo_de_criaturas(lista, TOTAL_CRIATURAS);
+    printf("Escolha sua criatura (1 a %d): ", TOTAL_CRIATURAS);
+    int escolha_jogador = ler_opcao(1, TOTAL_CRIATURAS) - 1;
+
+    if (!validar_indice_criatura(lista, escolha_jogador)) {
+        escolha_jogador = 0;
+    }
+
+    // Sorteia livremente entre todas as criaturas (0 a TOTAL_CRIATURAS - 1),
+    // permitindo inclusive batalha contra o mesmo Pokemon do jogador
+    int escolha_inimigo = rand() % TOTAL_CRIATURAS;
+    if (!validar_indice_criatura(lista, escolha_inimigo)) {
+        escolha_inimigo = 0;
+    }
+
+    Criatura *jog = obter_criatura_por_indice(lista, escolha_jogador);
+    Criatura *ini = obter_criatura_por_indice(lista, escolha_inimigo);
+    if (jog == NULL || ini == NULL) {
+        return;
+    }
+
+    estado->indice_jogador = escolha_jogador;
+    estado->indice_inimigo = escolha_inimigo;
+    estado->jogador = *jog;
+    estado->inimigo = *ini;
+    restaurar_hp_total(&estado->jogador);
+    restaurar_hp_total(&estado->inimigo);
+    estado->turno = 1;
+
+    printf("O adversario sorteou: %s!\n", obter_nome(&estado->inimigo));
+}
+
+int calcular_dano(const Criatura *atacante, const Criatura *alvo, int poder_habilidade) {
+    if (atacante == NULL || alvo == NULL) {
+        return 1;
+    }
+
+    int base = (obter_ataque(atacante) + poder_habilidade) - (obter_defesa(alvo) / 2);
+    int variacao = (rand() % 5) - 2; // variacao entre -2 e +2
+    int dano = base + variacao;
+
+    if (dano < 1) {
+        dano = 1;
+    }
+
+    return dano;
+}
+
+int executar_turno_jogador(EstadoBatalha *estado) {
+    if (estado == NULL) {
         return 0;
     }
 
-    const Habilidade *hab = obter_habilidade_por_indice(atacante, indice_habilidade);
-    int dano = hab->poder + atacante->ataque - (defensor->defesa / 2);
+    exibir_menu_habilidades(&estado->jogador);
+    int opcao = ler_opcao(0, NUM_HABILIDADES);
 
-    return dano > 0 ? dano : 1;
+    if (opcao == 0) {
+        int status = salvar_batalha("save.txt", estado);
+        if (status == ARQ_OK) {
+            imprimir_mensagem("Partida salva com sucesso! Voltando ao menu principal.");
+        } else {
+            exibir_erro_arquivo(status, "salvar a partida");
+        }
+        return 1; // indica pausa/saida
+    }
+
+    int escolha = opcao - 1;
+    if (!habilidade_pertence_criatura(&estado->jogador, escolha)) {
+        escolha = 0;
+    }
+
+    int poder = obter_poder_habilidade(&estado->jogador, escolha);
+    int dano = calcular_dano(&estado->jogador, &estado->inimigo, poder);
+    receber_dano(&estado->inimigo, dano);
+
+    exibir_ataque(
+        obter_nome(&estado->jogador),
+        obter_nome_habilidade(&estado->jogador, escolha),
+        obter_nome(&estado->inimigo),
+        dano
+    );
+
+    return 0;
 }
 
-void ganhar_xp(Criatura *criatura, int quantidade) {
-    if (!criatura || quantidade <= 0) {
+void executar_turno_inimigo(EstadoBatalha *estado) {
+    if (estado == NULL) {
         return;
     }
 
-    int nivel = obter_nivel(criatura);
-    long xp = (long)obter_xp(criatura) + quantidade;
+    Criatura *ia = &estado->inimigo;
 
-    while (xp >= XP_POR_NIVEL && nivel < NIVEL_MAX) {
-        xp -= XP_POR_NIVEL;
-        nivel++;
-        definir_nivel(criatura, nivel);
-        exibir_subida_de_nivel(obter_nome(criatura), nivel);
+    // Sorteia uma habilidade valida da criatura da IA para atacar
+    int escolha = rand() % NUM_HABILIDADES;
+    if (!habilidade_pertence_criatura(ia, escolha)) {
+        escolha = 0;
     }
 
-    if (nivel >= NIVEL_MAX) {
-        xp = 0;
-    }
-    definir_xp(criatura, (int)xp);
+    int poder = obter_poder_habilidade(ia, escolha);
+    int dano = calcular_dano(ia, &estado->jogador, poder);
+    receber_dano(&estado->jogador, dano);
+
+    exibir_ataque(
+        obter_nome(ia),
+        obter_nome_habilidade(ia, escolha),
+        obter_nome(&estado->jogador),
+        dano
+    );
 }
 
-/* ---- Oponente ---- */
-
-static int deve_curar(const Criatura *criatura) {
-    return obter_hp_atual(criatura) * 100 < obter_hp_max(criatura) * LIMIAR_CURA_PERCENT;
-}
-
-static int quantidade_de_cura(const Criatura *criatura) {
-    int q = obter_hp_max(criatura) / 3;
-    return q > 0 ? q : 1;
-}
-
-static int habilidade_mais_forte(const Criatura *criatura) {
-    int melhor = -1;
-    for (int i = 0; i < NUM_HABILIDADES; i++) {
-        if (!habilidade_pertence_criatura(criatura, i)) {
-            continue;
-        }
-        if (melhor < 0 ||
-            obter_poder_habilidade(criatura, i) > obter_poder_habilidade(criatura, melhor)) {
-            melhor = i;
-        }
-    }
-    return melhor;
-}
-
-/* ---- Turnos ---- */
-
-static void executar_ataque(Criatura *atacante, Criatura *alvo, int indice_habilidade) {
-    int dano = calcular_dano(atacante, alvo, indice_habilidade);
-    receber_dano(alvo, dano);
-    exibir_ataque(obter_nome(atacante),
-                  obter_nome_habilidade(atacante, indice_habilidade),
-                  obter_nome(alvo),
-                  dano);
-}
-
-static void turno_do_jogador(EstadoBatalha *estado) {
-    int escolha;
-    do {
-        exibir_menu_habilidades(&estado->jogador);
-        escolha = ler_opcao(1, NUM_HABILIDADES) - 1;
-    } while (!habilidade_pertence_criatura(&estado->jogador, escolha));
-
-    executar_ataque(&estado->jogador, &estado->inimigo, escolha);
-}
-
-static void turno_do_inimigo(EstadoBatalha *estado) {
-    Criatura *inimigo = &estado->inimigo;
-
-    if (deve_curar(inimigo)) {
-        int antes = obter_hp_atual(inimigo);
-        curar_criatura(inimigo, quantidade_de_cura(inimigo));
-        exibir_cura(obter_nome(inimigo), obter_hp_atual(inimigo) - antes);
-        return;
+int verificar_fim_batalha(EstadoBatalha *estado) {
+    if (estado == NULL) {
+        return RESULTADO_EM_ANDAMENTO;
     }
 
-    int habilidade = habilidade_mais_forte(inimigo);
-    if (habilidade >= 0) {
-        executar_ataque(inimigo, &estado->jogador, habilidade);
-    }
-}
-
-/* ---- Batalha ---- */
-
-void preparar_nova_batalha(EstadoBatalha *estado, Criatura *lista) {
-    if (!estado || !lista) {
-        return;
-    }
-
-    int placar_jogador = estado->placar_jogador;
-    int placar_inimigo = estado->placar_inimigo;
-
-    inicializar_estado_batalha_padrao(estado, lista);
-    estado->jogador.hp_atual = estado->jogador.hp_max;
-    estado->inimigo.hp_atual = estado->inimigo.hp_max;
-
-    estado->placar_jogador = placar_jogador;
-    estado->placar_inimigo = placar_inimigo;
-}
-
-int iniciar_batalha(EstadoBatalha *estado) {
-    if (!estado) {
-        return RESULTADO_ERRO;
-    }
-
-    while (!criatura_derrotada(&estado->jogador) && !criatura_derrotada(&estado->inimigo)) {
-        exibir_status_batalha(&estado->jogador, &estado->inimigo, estado->turno);
-
-        turno_do_jogador(estado);
-        if (!criatura_derrotada(&estado->inimigo)) {
-            turno_do_inimigo(estado);
-        }
-
-        if (!criatura_derrotada(&estado->jogador) && !criatura_derrotada(&estado->inimigo)) {
-            exibir_fim_de_turno(estado->turno);
-            estado->turno++;
-        }
+    if (criatura_derrotada(&estado->inimigo)) {
+        estado->placar_jogador++;
+        exibir_resultado_da_batalha(obter_nome(&estado->jogador));
+        ganhar_xp(&estado->jogador, XP_POR_VITORIA);
+        return RESULTADO_JOGADOR_VENCEU;
     }
 
     if (criatura_derrotada(&estado->jogador)) {
@@ -138,20 +144,76 @@ int iniciar_batalha(EstadoBatalha *estado) {
         return RESULTADO_INIMIGO_VENCEU;
     }
 
-    estado->placar_jogador++;
-    exibir_resultado_da_batalha(obter_nome(&estado->jogador));
-    ganhar_xp(&estado->jogador, XP_POR_VITORIA);
-    return RESULTADO_JOGADOR_VENCEU;
+    return RESULTADO_EM_ANDAMENTO;
+}
+
+void ganhar_xp(Criatura *criatura, int xp_ganho) {
+    if (criatura == NULL || xp_ganho <= 0) {
+        return;
+    }
+
+    int xp_total = obter_xp(criatura) + xp_ganho;
+    int nivel_atual = obter_nivel(criatura);
+
+    while (xp_total >= XP_POR_NIVEL && nivel_atual < NIVEL_MAX) {
+        xp_total -= XP_POR_NIVEL;
+        nivel_atual++;
+
+        definir_nivel(criatura, nivel_atual);
+        aumentar_atributos_nivel(criatura, BONUS_HP_NIVEL, BONUS_ATAQUE_NIVEL, BONUS_DEFESA_NIVEL);
+        exibir_subida_de_nivel(obter_nome(criatura), nivel_atual);
+    }
+
+    if (xp_total > XP_MAX) {
+        xp_total = XP_MAX;
+    }
+    definir_xp(criatura, xp_total);
+}
+
+int iniciar_batalha(EstadoBatalha *estado) {
+    if (estado == NULL) {
+        return RESULTADO_EM_ANDAMENTO;
+    }
+
+    int resultado = verificar_fim_batalha(estado);
+
+    while (resultado == RESULTADO_EM_ANDAMENTO) {
+        exibir_status_batalha(&estado->jogador, &estado->inimigo, estado->turno);
+        printf("Placar da sessao: Jogador %d x %d Inimigo\n",
+               estado->placar_jogador, estado->placar_inimigo);
+
+        if (executar_turno_jogador(estado)) {
+            return RESULTADO_PAUSADA;
+        }
+
+        resultado = verificar_fim_batalha(estado);
+        if (resultado != RESULTADO_EM_ANDAMENTO) {
+            break;
+        }
+
+        executar_turno_inimigo(estado);
+        resultado = verificar_fim_batalha(estado);
+        if (resultado != RESULTADO_EM_ANDAMENTO) {
+            break;
+        }
+
+        exibir_fim_de_turno(estado->turno);
+        estado->turno++;
+    }
+
+    return resultado;
 }
 
 void registrar_progresso_da_batalha(const EstadoBatalha *estado, Criatura *lista) {
-    if (!estado || !lista) {
+    if (estado == NULL || lista == NULL) {
         return;
     }
-    Criatura *destino = obter_criatura_por_indice(lista, estado->indice_jogador);
-    if (!destino) {
+
+    Criatura *original = obter_criatura_por_indice(lista, estado->indice_jogador);
+    if (original == NULL) {
         return;
     }
-    definir_nivel(destino, obter_nivel(&estado->jogador));
-    definir_xp(destino, obter_xp(&estado->jogador));
+
+    *original = estado->jogador;
+    restaurar_hp_total(original);
 }
