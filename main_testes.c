@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "teste_aux.h"
+#include "teste\teste_aux.h"
 
 int main(void) {
     srand(42);
