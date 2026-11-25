@@ -112,11 +112,14 @@ void exibir_catalogo_de_criaturas(const Criatura *lista, int total) {
     printf("============================================\n");
 }
 
-void exibir_resultado_da_batalha(const char *vencedor) {
+void exibir_resultado_da_batalha(const char *vencedor, int eh_aliado) {
+    const char *lado = eh_aliado ? "aliado" : "inimigo";
+    const char *nome = (vencedor != NULL) ? vencedor : "Desconhecido";
+
     printf("\n========================================\n");
     printf("             FIM DA BATALHA             \n");
     printf("========================================\n");
-    printf("Vencedor: %s!\n", (vencedor != NULL) ? vencedor : "Desconhecido");
+    printf("%s %s ganhou a batalha!\n", nome, lado);
     printf("========================================\n");
 }
 

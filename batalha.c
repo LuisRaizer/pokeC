@@ -128,14 +128,14 @@ int verificar_fim_batalha(EstadoBatalha *estado) {
 
     if (criatura_derrotada(&estado->inimigo)) {
         estado->placar_jogador++;
-        exibir_resultado_da_batalha(obter_nome(&estado->jogador));
+        exibir_resultado_da_batalha(obter_nome(&estado->jogador), 1);
         ganhar_xp(&estado->jogador, XP_POR_VITORIA);
         return RESULTADO_JOGADOR_VENCEU;
     }
 
     if (criatura_derrotada(&estado->jogador)) {
         estado->placar_inimigo++;
-        exibir_resultado_da_batalha(obter_nome(&estado->inimigo));
+        exibir_resultado_da_batalha(obter_nome(&estado->inimigo), 0);
         return RESULTADO_INIMIGO_VENCEU;
     }
 

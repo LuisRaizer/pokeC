@@ -10,7 +10,7 @@ void imprimir_mensagem(const char *msg);
 int ler_opcao(int min, int max);
 
 void exibir_catalogo_de_criaturas(const Criatura *lista, int total);
-void exibir_resultado_da_batalha(const char *vencedor);
+void exibir_resultado_da_batalha(const char *vencedor, int eh_aliado);
 
 void exibir_status_batalha(const Criatura *jogador, const Criatura *inimigo, int turno);
 void exibir_menu_habilidades(const Criatura *criatura);
