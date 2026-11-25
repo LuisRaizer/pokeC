@@ -46,21 +46,30 @@ int ler_opcao(int min, int max) {
 
     while (1) {
         if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+            imprimir_mensagem("Entrada encerrada. Voltando com a opcao padrao.");
             return min;
         }
 
-        if (strchr(buffer, '\n') == NULL) {
+        size_t len = strlen(buffer);
+        int terminou_com_nova_linha = (len > 0 && buffer[len - 1] == '\n');
+
+        if (!terminou_com_nova_linha && !feof(stdin)) {
             int ch;
             while ((ch = getchar()) != '\n' && ch != EOF) {
-                // descarta o restante da linha
             }
+            printf("Entrada muito longa. Digite um numero entre %d e %d: ", min, max);
+            continue;
+        }
+
+        if (terminou_com_nova_linha) {
+            buffer[len - 1] = '\0';
         }
 
         errno = 0;
         char *fim = NULL;
         long valor = strtol(buffer, &fim, 10);
 
-        while (*fim == ' ' || *fim == '\t' || *fim == '\r' || *fim == '\n') {
+        while (*fim == ' ' || *fim == '\t' || *fim == '\r') {
             fim++;
         }
 
@@ -69,7 +78,13 @@ int ler_opcao(int min, int max) {
             return (int)valor;
         }
 
-        printf("Opcao invalida. Digite um numero entre %d e %d: ", min, max);
+        if (fim == buffer) {
+            printf("Entrada invalida (nao e um numero). Digite um numero entre %d e %d: ", min, max);
+        } else if (errno == ERANGE || valor < (long)min || valor > (long)max) {
+            printf("Numero fora do intervalo. Digite um numero entre %d e %d: ", min, max);
+        } else {
+            printf("Entrada invalida. Digite apenas um numero entre %d e %d: ", min, max);
+        }
     }
 }
 

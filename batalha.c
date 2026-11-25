@@ -10,12 +10,6 @@ void preparar_nova_batalha(EstadoBatalha *estado, Criatura *lista) {
         return;
     }
 
-    static int semente_inicializada = 0;
-    if (!semente_inicializada) {
-        srand((unsigned int)time(NULL));
-        semente_inicializada = 1;
-    }
-
     exibir_catalogo_de_criaturas(lista, TOTAL_CRIATURAS);
     printf("Escolha sua criatura (1 a %d): ", TOTAL_CRIATURAS);
     int escolha_jogador = ler_opcao(1, TOTAL_CRIATURAS) - 1;
@@ -73,7 +67,7 @@ int executar_turno_jogador(EstadoBatalha *estado) {
     int opcao = ler_opcao(0, NUM_HABILIDADES);
 
     if (opcao == 0) {
-        int status = salvar_batalha("save.txt", estado);
+        int status = salvar_batalha(ARQ_CAMINHO_BATALHA, estado);
         if (status == ARQ_OK) {
             imprimir_mensagem("Partida salva com sucesso! Voltando ao menu principal.");
         } else {
@@ -199,6 +193,10 @@ int iniciar_batalha(EstadoBatalha *estado) {
 
         exibir_fim_de_turno(estado->turno);
         estado->turno++;
+    }
+
+   if (resultado == RESULTADO_JOGADOR_VENCEU || resultado == RESULTADO_INIMIGO_VENCEU) {
+        (void)remover_batalha_salva(ARQ_CAMINHO_BATALHA);
     }
 
     return resultado;

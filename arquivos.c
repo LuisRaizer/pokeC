@@ -279,6 +279,11 @@ int carregar_batalha(const char *caminho, EstadoBatalha *estado, Criatura *lista
         return ARQ_ERRO;
     }
 
+    if (criatura_derrotada(&temp.jogador) || criatura_derrotada(&temp.inimigo)) {
+        fclose(f);
+        return ARQ_ERRO;
+    }
+
     if (arquivo_tem_lixo_restante(f)) {
         fclose(f);
         return ARQ_ERRO;
@@ -286,5 +291,15 @@ int carregar_batalha(const char *caminho, EstadoBatalha *estado, Criatura *lista
 
     fclose(f);
     *estado = temp;
+    return ARQ_OK;
+}
+
+int remover_batalha_salva(const char *caminho) {
+    if (caminho == NULL) {
+        return ARQ_ERRO;
+    }
+    if (remove(caminho) != 0) {
+        return (errno == ENOENT) ? ARQ_PADRAO : ARQ_ERRO;
+    }
     return ARQ_OK;
 }

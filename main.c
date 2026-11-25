@@ -18,9 +18,9 @@ int main(void) {
     EstadoBatalha estado_batalha;
     inicializar_estado_batalha_padrao(&estado_batalha, lista_criaturas);
 
-    int status_prog = carregar_progresso("progresso.txt", lista_criaturas, TOTAL_CRIATURAS);
+    int status_prog = carregar_progresso(ARQ_CAMINHO_PROGRESSO, lista_criaturas, TOTAL_CRIATURAS);
     if (status_prog == ARQ_PADRAO) {
-        if (salvar_progresso("progresso.txt", lista_criaturas, TOTAL_CRIATURAS) != ARQ_OK) {
+        if (salvar_progresso(ARQ_CAMINHO_PROGRESSO, lista_criaturas, TOTAL_CRIATURAS) != ARQ_OK) {
             exibir_erro_arquivo(ARQ_ERRO, "criar o arquivo de progresso");
         }
     } else if (status_prog == ARQ_ERRO) {
@@ -40,7 +40,7 @@ int main(void) {
                 preparar_nova_batalha(&estado_batalha, lista_criaturas);
                 if (iniciar_batalha(&estado_batalha) == RESULTADO_JOGADOR_VENCEU) {
                     registrar_progresso_da_batalha(&estado_batalha, lista_criaturas);
-                    int st = salvar_progresso("progresso.txt", lista_criaturas, TOTAL_CRIATURAS);
+                    int st = salvar_progresso(ARQ_CAMINHO_PROGRESSO, lista_criaturas, TOTAL_CRIATURAS);
                     if (st != ARQ_OK) {
                         exibir_erro_arquivo(st, "salvar o progresso");
                     }
@@ -52,7 +52,7 @@ int main(void) {
                 break;
 
             case 3: {
-                int status_save = carregar_batalha("save.txt", &estado_batalha, lista_criaturas);
+                int status_save = carregar_batalha(ARQ_CAMINHO_BATALHA, &estado_batalha, lista_criaturas);
                 exibir_tela_carregar_partida(status_save, &estado_batalha);
 
                 if (status_save == ARQ_OK) {
@@ -61,7 +61,7 @@ int main(void) {
                     if (retomar == 1) {
                         if (iniciar_batalha(&estado_batalha) == RESULTADO_JOGADOR_VENCEU) {
                             registrar_progresso_da_batalha(&estado_batalha, lista_criaturas);
-                            int st = salvar_progresso("progresso.txt", lista_criaturas, TOTAL_CRIATURAS);
+                            int st = salvar_progresso(ARQ_CAMINHO_PROGRESSO, lista_criaturas, TOTAL_CRIATURAS);
                             if (st != ARQ_OK) {
                                 exibir_erro_arquivo(st, "salvar o progresso");
                             }
@@ -76,7 +76,7 @@ int main(void) {
                 break;
 
             case 5: {
-                int st = salvar_progresso("progresso.txt", lista_criaturas, TOTAL_CRIATURAS);
+                int st = salvar_progresso(ARQ_CAMINHO_PROGRESSO, lista_criaturas, TOTAL_CRIATURAS);
                 if (st != ARQ_OK) {
                     exibir_erro_arquivo(st, "salvar o progresso ao sair");
                 }

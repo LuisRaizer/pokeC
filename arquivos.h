@@ -7,6 +7,9 @@
 #define ARQ_PADRAO 1
 #define ARQ_ERRO -1
 
+#define ARQ_CAMINHO_BATALHA   "save.txt"
+#define ARQ_CAMINHO_PROGRESSO "progresso.txt"
+
 #define NIVEL_MIN 1
 #define NIVEL_MAX 100
 #define XP_MIN 0
@@ -33,5 +36,6 @@ int carregar_progresso(const char *caminho, Criatura *lista, int total);
 void inicializar_estado_batalha_padrao(EstadoBatalha *estado, Criatura *lista);
 int salvar_batalha(const char *caminho, const EstadoBatalha *estado);
 int carregar_batalha(const char *caminho, EstadoBatalha *estado, Criatura *lista);
+int remover_batalha_salva(const char *caminho);
 
 #endif
